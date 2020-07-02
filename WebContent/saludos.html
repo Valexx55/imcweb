@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Saludos</title>
+	<!-- Mobile Specific Metas
+		–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- FONT
+		–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+    <!-- CSS
+		–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <style>
+    	img {
+    	  width: 100%;
+    	  height: 150px;
+    	}
+    	p {
+    		text-align: center;
+    	}
+    	.centrado {
+    		display: inline-block;
+    		text-align: center;
+    	}
+	</style>
+	<script>
+		const URL_SERVICIO = "http://localhost:8080/imcweb/Saludo?idioma="
+		var xhr = new XMLHttpRequest();
+
+		this.onload = iniciar;//this es window
+		function iniciar ()
+		{
+			var array_ps = document.getElementsByTagName("p");
+			console.log ("longitud dentro " + array_ps.length);
+			for (let i=0;i<array_ps.length;i++)
+			{
+				array_ps[i].onclick=saludo;
+			}
+		}
+		function saludo ()
+		{
+			console.log ("Ha hecho click en p ");
+			console.log ("iD this = " + this.id);
+			let string_servicio = URL_SERVICIO+this.id;
+			console.log ("Url servicio = " + string_servicio);
+			xhr.open("GET", string_servicio, true);
+			xhr.onreadystatechange=consultaEstado;
+			xhr.send();
+		}
+		function consultaEstado ()
+		{
+			console.log ("consultaEstado invocada estado =  "+xhr.readyState);
+			if (xhr.readyState==4)
+			{
+				console.log ("La com ha terminado con estatus "+ xhr.status);
+				if (xhr.status==200)
+				{
+					console.log ("La com ha terminado con éxito ");
+					console.log ("Cuerpo de la respuesta "+ xhr.responseText);
+					console.log ("TIPO MIME de la respuesta "+ xhr.responseType);
+					document.getElementById("caja_saludos").value = xhr.responseText;
+				}
+				//xhr.responseType
+
+			}
+		}
+		
+	</script>
+</head>
+<body>
+	<!--Caja de texto que refleje el saludo
+	cuatro botones cada uno con una bandera 
+	(españa, italia
+	 francia, inglaterra)-->
+	 <div class="container">
+	 	<div class="row">
+	 		<div class="twelve columns"> 
+	 		<h1>Saludos</h1>
+			<input id="caja_saludos" class="centrado" type="text">
+	 		</div>
+	 	</div>
+	 	<div class="row">
+
+	 		<div class="five columns">
+	 			<img src="img/sp.png" alt="">
+	 			<p id="es" class="button u-full-width">Español</p>
+	 		</div>
+
+	 		<div class="five columns">
+	 			<img src="img/it.png" alt="">
+	 			<p id="it" class="button u-full-width">Italiano</p>
+	 		</div>
+
+	 	</div>
+
+	 	<div class="row">
+	 		<div class="five columns">
+	 			<img src="img/uk.png" alt="">
+	 			<p id="en" class="button u-full-width">Inglés</p>
+	 		</div>
+
+	 		<div class="five columns">
+	 			<img src="img/fr.png" alt="">
+	 			<p id="fr" class="button u-full-width">Francés</p>
+	 		</div>
+	 	</div>
+	 </div> <!-- cierre .container -->
+</body>
+</html>
