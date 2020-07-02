@@ -6,11 +6,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  * Servlet implementation class Saludo
  */
-@WebServlet("/Saludo")//mapping-correspondecia
+@WebServlet("/Saludo") // mapping-correspondecia
 public class Saludo extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -29,12 +28,31 @@ public class Saludo extends HttpServlet {
 	// LA PETICIÓN ES DE CONSULTA --GET
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		//obtener el idioma y devolver el saludo en ese idioma
+
+		// obtener el idioma y devolver el saludo en ese idioma
 		String idioma = request.getParameter("idioma");
-		System.out.println("Idioma recibido (rx) " +  idioma );
-		
-		response.getWriter().append("HOLA");
+		System.out.println("Idioma recibido (rx) " + idioma);
+		String saludo = null;
+		switch (idioma) {
+		case "fr":
+			saludo = "Salut";
+			break;
+		case "es":
+			saludo = "Hola";
+			break;
+		case "en":
+			saludo = "Hello";
+			break;
+		case "it":
+			saludo = "Ciao";
+			break;
+
+		default:  //por defecto ponemos español
+				saludo = "Hola";
+			break;
+		}
+
+		response.getWriter().append(saludo);
 	}
 
 	/**
