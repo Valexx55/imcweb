@@ -1,6 +1,5 @@
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,21 +7,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.hedima.val.imc.EntradaSalida;
-import edu.hedima.val.imc.IMC;
-import edu.hedima.val.imc.Persona;
-
 /**
- * Servlet implementation class CalculaIMC
+ * Servlet implementation class LetraDni
  */
-@WebServlet("/CalculaIMC")
-public class CalculaIMC extends HttpServlet {
+@WebServlet("/LetraDni")
+public class LetraDni extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CalculaIMC() {
+    public LetraDni() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,13 +26,17 @@ public class CalculaIMC extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		//jar JAVA ARCHIVE - LIBRERÍAS JAVA BIBLIOTECAS
-		//usar el jar importado 
-		Persona persona = new Persona(90, 2);
-		double imc_n = IMC.calcula(persona);
-		//System.out.println(imc_n);
-		response.getWriter().append("Su imc es "+ imc_n);
+		// TODO solucion para letradeni
+		System.out.println("llamando a Get LetraDNI");
+		String numero_rx = request.getParameter("numerodni");
+		System.out.println("Numero rx = " + numero_rx);
+		//casting parseo para pasar de String a int
+		int numero_dni = Integer.parseInt(numero_rx);
+		Dni dni = new Dni(numero_dni);
+		char letra_dni = dni.calcularLetra();
+		System.out.println("Letra calcuada = " + letra_dni);
+		
+		response.getWriter().append(letra_dni);
 	}
 
 	/**
@@ -45,10 +44,7 @@ public class CalculaIMC extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//doGet(request, response);
-		BufferedReader br = request.getReader();
-		System.out.println(br.readLine());
-		response.getWriter().append("22");
+		doGet(request, response);
 	}
 
 }

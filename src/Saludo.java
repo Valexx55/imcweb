@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/Saludo") // mapping-correspondecia
 public class Saludo extends HttpServlet {
+	//IoC Inversion de Control --> new lo hace el otra app
+	//apache tomacta hace el new de Saludo, yo no--> eso es IOC
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -54,7 +56,8 @@ public class Saludo extends HttpServlet {
 
 		response.getWriter().append(saludo);
 	}
-
+//http://localhost:8080/imcweb/Saludo?idioma=fr //HEADER
+	//en las peticiones GET el cuerpo va vacío!!!
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -65,6 +68,8 @@ public class Saludo extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+	
+	//VOLVEMOS A LAS 11:50 :D
 
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

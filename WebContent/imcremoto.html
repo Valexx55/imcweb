@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calcule su IMC</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        console.log("Estoy dentro");
+
+        const FOTO_DESNUTRIDO = "imagenes_imc/desnutrido.gif";
+        const FOTO_DELGADO = "imagenes_imc/delgado.gif";
+        const FOTO_IDEAL = "imagenes_imc/ideal.gif";
+        const FOTO_SOBREPESO = "imagenes_imc/sobrepeso.gif";
+        const FOTO_OBESO = "imagenes_imc/obeso.gif";
+
+        /**
+        Función que calcula el valor nominal del IMC dado el valor numérico
+        */
+        function obtenerIMCNominal(imc_numerico) {
+            let imc_nominal = "";
+
+            if (imc_numerico < 16) {
+                imc_nominal = "DESNUTRIDO";
+            } else if ((imc_numerico >= 16) && (imc_numerico < 18)) {
+                imc_nominal = "DELGADO";
+            } else if ((imc_numerico >= 18) && (imc_numerico < 25)) {
+                imc_nominal = "IDEAL";
+            } else if ((imc_numerico >= 25) && (imc_numerico < 31)) {
+                imc_nominal = "SOBREPESO";
+            } else {
+                imc_nominal = "OBESO";
+            }
+
+            return imc_nominal;
+
+        }
+        /**
+        Función que devuelve el elemento img donde irá la foto del
+        estado del IMC correspondiente.
+        Si no existe ningún elemento, lo crea
+        Si exsite, lo recicla
+        ENTRADAS, SALIDAS, FUNCIONALIDAD, PRECONDICIONES Y POSTCONDICIONES
+        **/
+        function obtenerElementoImg() {
+            let elemento_img;
+
+            //OBTENENEMOS EL ELTO. PADRE Y VEMOS SI TIENE O HIJOS
+            let padre = document.getElementById("hook_imagen");
+
+            if (padre.childElementCount == 0) {
+                console.log("no existe img, lo creo");
+                elemento_img = document.createElement("img");
+                padre.appendChild(elemento_img);
+            } else {
+                console.log("ya tengo el img, lo reciclo");
+                elemento_img = padre.firstChild;
+            }
+            return elemento_img;
+        }
+        function dibujarImagen(imc_nominal) {
+            //TODO OBTENER EL ELEMENTO IMAGE
+            let elto_img = obtenerElementoImg();
+            switch (imc_nominal) {
+                case "DESNUTRIDO":
+                    //asginar al atributo src de la imagen la foto de desnutrido
+                    elto_img.src = FOTO_DESNUTRIDO;
+                    break;
+                case "DELGADO":
+                    //asginar al atributo src de la imagen la foto de delgado
+                    elto_img.src = FOTO_DELGADO;
+                    break;
+
+                case "IDEAL":
+                    elto_img.src = FOTO_IDEAL;
+                    break;
+                case "SOBREPESO":
+                    elto_img.src = FOTO_SOBREPESO;
+                    break;
+                case "OBESO":
+                    elto_img.src = FOTO_OBESO;
+
+                    break;
+            }
+        }
+        function obtenerAltura() {
+            let altura;
+
+            altura = document.getElementById("inAltura").value;
+
+            return altura;
+
+        }
+        function obtenerPeso() {
+            let peso;
+
+            peso = document.getElementById("inPeso").value;
+
+            return peso;
+
+        }
+        function calcularIMCNumerico(altura, peso) {
+            let imc_calculado;
+
+            imc_calculado = peso / (altura * altura);
+
+            return imc_calculado;
+        }
+
+        function mostrarResultado(imc) {
+            //mostrar el resultado numérico redondeado
+            let resultado_imc = document.getElementById("spIMC");//obtengo la caja
+            let imc_redondeado = Math.round(imc);//redondeo el resultado
+            resultado_imc.innerHTML = imc_redondeado;//asigno //TODO MEJORA redondear a dos decimales
+            //mostrar el resultado nominal
+            let imc_nominal = obtenerIMCNominal(imc);
+            console.log("IMC nominal " + imc_nominal);
+            document.getElementById("spGrupo").innerHTML = imc_nominal;
+            //mostramos la imagen
+            dibujarImagen(imc_nominal);
+        }
+        function calcularIMC() {
+            let altura = obtenerAltura();
+            let peso = obtenerPeso();
+            let imc = calcularIMCRemoto(altura, peso);
+            mostrarResultado(imc);
+        }
+
+        //window.onload = enviaDatos;
+
+        var xmlHttp = new XMLHttpRequest ();
+        function calcularIMCRemoto(a, p) {
+           
+            var persona = {
+                altura: a,
+                peso: p
+            };
+
+
+/*SERIALIZAR*/ var persona_json = JSON.stringify(persona);//paso de la variable persona al String en JSON de persona
+            alert(persona_json);
+            console.log(persona_json);
+           
+
+//"Content-Type", "application/json; charset=UTF-8"
+
+            xmlHttp.onreadystatechange = procesarEventos;
+            xmlHttp.open('POST', 'http://localhost:8080/imcweb/CalcularIMC', true); //indicamos como vamos a enviar los datos, en este caso con el metodo GET al archivo meses.php?num= el valor que le indiquemos en el textbox
+           // xmlHttp.setRequestHeader('Content-Type', 'application/json');
+            xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            xmlHttp.send(persona_json);
+
+
+
+        }
+
+        function procesarEventos ()
+        {
+            if (xmlHttp.readyState==4)
+            {
+                if (xmlHttp.status == 200)
+                {
+                    console.log ("resultado = " +xmlHttp.responseText);
+                    mostrarResultado(xmlHttp.responseText);
+                }
+            }
+        }
+
+    </script>
+
+    <style>
+    </style>
+
+    <!--Fórmula del IMC= peso (kg)/ (altura)2
+        Si es <16 = Desnutridos
+        Si es >=16 y <18 = Delgados
+        Si es >=18 y <25 = Ideal
+        Si es >=25 y <31 = Sobrepeso
+        Si es >=31 = Obesidad
+
+        candidatos a constantes
+        intervalos, valores nominales, imagenes
+
+        ALGORITMO
+        ---------
+        1. Obtener peso
+        2. Obtener altura
+        3. Calcular resultado
+        4. Informar al usuario
+    -->
+
+</head>
+
+<body>
+
+    <div class="contenedor">
+        <h2>Cálculo de IMC</h2>
+        <h3>(Índice de masa Corporal)</h3>
+        <p class="dato">Introduce tu altura: <input type="text" name="" id="inAltura"></p>
+        <p class="dato">Introduce tu peso: <input type="text" name="" id="inPeso"></p class="dato">
+        <input type="button" onclick="calcularIMC()" value="CALCULAR" id="inCalculo">
+        <p class="dato">IMC: <span id="spIMC"></span></p>
+        <p class="dato">Usted se encuentra en el grupo: <span id="spGrupo"></span></p class="dato">
+
+    </div>
+    <div id="hook_imagen"></div>
+
+
+</body>
+
+</html>
