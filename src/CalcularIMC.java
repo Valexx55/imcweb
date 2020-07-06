@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 
 import edu.hedima.val.imc.IMC;
 import edu.hedima.val.imc.Persona;
+import edu.hedima.val.imc.TiposIMC;
 
 /**
  * Servlet implementation class CalcularIMC
@@ -53,12 +54,25 @@ public class CalcularIMC extends HttpServlet {
 		//Gson es una biblioteca de Google para este menester
 		//vamos a pasar de string a persona
 		Gson gson = new Gson();
-		Persona p = gson.fromJson(persona_json, Persona.class);;
+		Persona p = gson.fromJson(persona_json, Persona.class);
 		System.out.println("Peso persona = " +p.getPeso());
 		System.out.println("Altura persona = "+ p.getAltura());
 		double imc = IMC.calcula(p);
 		System.out.println("Imc obtenido = " + imc);
-		response.getWriter().append(imc+"");
+		String strimc = String.valueOf(imc);
+		
+		//***preparamos la salida
+		ImcResultado imcResultado = new ImcResultado();
+		imcResultado.setValor_num(imc);
+		String imc_nom = TiposIMC.traduceIMC(imc).toString();
+		imcResultado.setTipo_imc_nominal(imc_nom);
+		//ya tenemos el objeto de salida con el resultado
+		//TODO pasar el imcResultado a JSON
+		String json_resultado = gson.toJson(imcResultado);
+		System.out.println("json devuelto =  "+ json_resultado);
+		
+		//response.getWriter().append(strimc);
+		response.getWriter().append(json_resultado);
 		
 		
 	}
