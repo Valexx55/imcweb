@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 import com.google.gson.Gson;
 
 import edu.hedima.val.imc.IMC;
@@ -73,6 +74,8 @@ public class CalcularIMC extends HttpServlet {
 		
 		//response.getWriter().append(strimc);
 		response.getWriter().append(json_resultado);
+		
+		
 		
 		
 	}
