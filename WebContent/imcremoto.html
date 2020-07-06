@@ -111,21 +111,13 @@
         }
 
         function mostrarResultado(imc_json) {
-        	//TODO ADAPTAR EL CÓDIGO A LA NUEVA INFO RECIBIDA {"tipo_imc_nominal":"NORMAL","valor_num":22.5}
-            //mostrar el resultado numérico redondeado
             
             console.log ("imc = " + imc_json);
             let resultado = JSON.parse(imc_json);
-            
             let resultado_imc = document.getElementById("spIMC");//obtengo la caja
             let imc_redondeado = Math.round(resultado.valor_num);//redondeo el resultado
-            //resultado_imc.innerHTML = imc_redondeado;//asigno //TODO MEJORA redondear a dos decimales
             resultado_imc.innerHTML = imc_redondeado;//asigno //TODO MEJORA redondear a dos decimales
-            //mostrar el resultado nominal
-            let imc_nominal = obtenerIMCNominal(imc);
-            console.log("IMC nominal " + imc_nominal);
             document.getElementById("spGrupo").innerHTML = resultado.tipo_imc_nominal;
-            //mostramos la imagen
             dibujarImagen(resultado.tipo_imc_nominal);
         }
         function calcularIMC() {
