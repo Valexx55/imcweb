@@ -1,3 +1,4 @@
+package controlador;
 
 
 import java.io.BufferedReader;
@@ -16,9 +17,11 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 
+import bean.ImcResultado;
 import edu.hedima.val.imc.IMC;
 import edu.hedima.val.imc.Persona;
 import edu.hedima.val.imc.TiposIMC;
+import servicio.ImcService;
 
 /**
  * Servlet implementation class CalcularIMC
@@ -28,6 +31,8 @@ public class CalcularIMC extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private Logger log = Logger.getLogger("mylog");
+	private ImcService imcService;
+	
 	private List<Persona> lp = new ArrayList<Persona>();
        
 	//SCOPE O ÁMBITO --> CUÁNTO TIEMPO VIVE UNA VARIABLE EN EL SERVIDOR
@@ -39,7 +44,7 @@ public class CalcularIMC extends HttpServlet {
 	public void init() throws ServletException {
 		// TODO Auto-generated method stub
 		super.init();
-		//lp = new ArrayList<Persona>();
+		imcService = new ImcService();
 	}
 	
     /**
@@ -58,6 +63,12 @@ public class CalcularIMC extends HttpServlet {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
+	
+	//tengo que pasar de String - JSON a Objeto Persona de JAVA
+	//DESERIALIZAR
+	//para serializar y deserializar JSON en JAVA se usa Gson
+	//Gson es una biblioteca de Google para este menester
+	//vamos a pasar de string a persona
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -65,58 +76,20 @@ public class CalcularIMC extends HttpServlet {
 		// TODO leer el peso y la altura recibidos y devolver el IMC
 		//al ser un POST , la info viene en el cuerpo. Hay que leer de ahí
 		
-		log.debug("Ha entrado en DoPost de CalcularIMC 2");
-		
-		
+		log.debug("Ha entrado CalcularIMC post");	
+		//recibo la petición
 		BufferedReader br = request.getReader();
 		String persona_json = br.readLine();
-		System.out.println("Persona json = " +persona_json);
-		System.out.println("TIPO MIME = "+request.getContentType());
-		//tengo que pasar de String - JSON a Objeto Persona de JAVA
-		//DESERIALIZAR
-		//para serializar y deserializar JSON en JAVA se usa Gson
-		//Gson es una biblioteca de Google para este menester
-		//vamos a pasar de string a persona
+		log.debug("Datos rx " + persona_json);
 		Gson gson = new Gson();
-		Persona p = gson.fromJson(persona_json, Persona.class);
-		this.lp.add(p);
-		
-		System.out.println("Peso persona = " +p.getPeso());
-		System.out.println("Altura persona = "+ p.getAltura());
-		double imc = IMC.calcula(p);
-		System.out.println("Imc obtenido = " + imc);
-		String strimc = String.valueOf(imc);
-		
-		//***preparamos la salida
-		ImcResultado imcResultado = new ImcResultado();
-		imcResultado.setValor_num(imc);
-		String imc_nom = TiposIMC.traduceIMC(imc).toString();
-		imcResultado.setTipo_imc_nominal(imc_nom);
-		//ya tenemos el objeto de salida con el resultado
-		//TODO pasar el imcResultado a JSON
+		Persona p = gson.fromJson(persona_json, Persona.class);	
+		//llamo al servicio
+		ImcResultado imcResultado = imcService.calcularIMC(p);	
+		//devuelvo la respuesta
 		String json_resultado = gson.toJson(imcResultado);
-		System.out.println("json devuelto =  "+ json_resultado);
-		
-		int npersonas = 1;
-		for (Persona persona : lp)
-		{
-			//log.debug("Nombre " + persona.getNombre());//todo registrar el nombre
-			log.debug("PERSONA " + npersonas);
-			log.debug("Peso " + persona.getPeso());
-			log.debug("Altura " + persona.getAltura());
-			npersonas++;
-		}
-		
-		
-		
-		response.setContentType("application/json; charset=UTF-8");//setea el tipo mime en la cabecera
-		response.setStatus (HttpURLConnection.HTTP_OK);//seteo el status
-		
-		//response.getWriter().append(strimc);
+		log.debug("Datos tx " + json_resultado);
 		response.getWriter().append(json_resultado);//escribo el JSON en el cuerpo
-		
-		
-		
+				
 		
 	}
 

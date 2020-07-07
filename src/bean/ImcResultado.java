@@ -1,3 +1,4 @@
+package bean;
 /**
  * esta clase es un bean para expresar el resultado
  * del cálculo del imc
