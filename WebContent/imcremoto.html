@@ -159,10 +159,16 @@
         {
             if (xmlHttp.readyState==4)
             {
-                if (xmlHttp.status == 200)
+                if (xmlHttp.status == 200)//ok
                 {
                     console.log ("resultado = " +xmlHttp.responseText);
                     mostrarResultado(xmlHttp.responseText);
+                } else if (xmlHttp.status == 400)//bad request
+                	{
+                	window.alert ("Petición incorrecta. Revise sus datos");
+                	}
+                else { //porsiaca un 500 u otros códigos http
+                	window.alert ("Servidor no disponible. Inténtelo más tarde");
                 }
             }
         }
